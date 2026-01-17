@@ -42,5 +42,8 @@ module.exports = {
 
     // 👇 чтобы не ругался на declare global namespace Express
     "@typescript-eslint/no-namespace": "off",
+    "new-cap": ["error", {
+      capIsNew: false,
+    }],
   },
 };
