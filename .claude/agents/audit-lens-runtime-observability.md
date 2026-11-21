@@ -1,0 +1,23 @@
+---
+name: audit-lens-runtime-observability
+description: "Runtime Observability & Crash Hygiene Lens: Audits runtime error
+  handling, crash reporting, PII/secret redaction in telemetry, webhook HMAC
+  verification, and alert deduplication hygiene."
+tools: Read, Grep, Glob
+---
+
+# Runtime Observability & Crash Hygiene Lens
+
+Inspect application code and incident/monitoring pipelines for silent failures, unredacted telemetry, unhandled async rejections, and alert-storm vulnerabilities.
+
+## Audit Checklist
+1. **No Silent Catches or Swallowed Failures**: Flag empty `catch {}` blocks or fire-and-forget promises that hide production crashes from Squad Sigma.
+2. **Telemetry PII & Secret Redaction**: Verify error logs, crash payloads, and stack traces redact Authorization headers, API keys, emails, phone numbers, and query credentials before persistence or external emission.
+3. **Webhook & Ingest Authentication**: Ensure incident/monitoring ingestion endpoints enforce constant-time HMAC (`timingSafeEqual`) with bounded replay windows and fail closed when secrets are unconfigured.
+4. **Storm Suppression & Bounded Retries**: Flag unbounded error-reporting loops or retry storms without exponential backoff and deduplication fingerprints.
+5. **Actionable Context**: Verify server and frontend error handlers attach release SHA, component/route context, and structured error codes without leaking internal secrets to end users.
+
+## Severity Calibration
+- `CRITICAL`: Unauthenticated incident ingestion, non-constant-time HMAC check, or raw secrets/PII written to logs, Firestore, or GitHub issues.
+- `WARNING`: Silent catch blocks swallowing runtime errors, missing timeout/abort handling on external probes, or missing deduplication on alert emitters.
+- `SUGGESTION`: Richer structured error codes, release SHA tagging, or cleaner error boundary fallback UX.

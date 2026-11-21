@@ -1,0 +1,30 @@
+name: External PR Auto-Auditor
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  # Distinct prefix from reusable-pr-auditor.yml's `external-pr-audit-*` group so
+  # caller and callee never self-cancel under cancel-in-progress: true.
+  group: caller-external-pr-audit-${{ github.repository }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  audit:
+    uses: Lancelotech/agent-org/.github/workflows/reusable-pr-auditor.yml@3b7a05293fa58e95cfe5d4488ffc02d40a8e231f # main
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      base_branch: main
+      config_path: agent-org.yaml
+      agent_org_ref: 3b7a05293fa58e95cfe5d4488ffc02d40a8e231f
+    secrets:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      AGENT_ORG_REPO_TOKEN: ${{ secrets.AGENT_ORG_REPO_TOKEN }}

@@ -1,0 +1,272 @@
+version: "1"
+organization:
+  name: ScanReport-server
+  repo: Lancelotech/ScanReport-server
+  baseBranch: main
+
+prGuardrails:
+  maxNetLoc: 350
+  requireSingleSquad: true
+  blockOnCritical: true
+  enableFenceDetector: true
+  enableAntiSlopScanner: true
+  enableSupplyChainScanner: true
+  antiSlopIncludeGlobs:
+    - "**/*.tsx"
+    - "**/*.jsx"
+    - "**/*.css"
+    - "**/*.scss"
+
+tokenBudget:
+  maxInputTokensPerLens: 24000
+  maxOutputTokensPerLens: 4096
+  maxTotalInputTokens: 120000
+  shortCircuitDocsAndLockfiles: true
+  shortCircuitOnDeterministicBlock: false
+
+providers:
+  priority:
+    - gemini
+    - anthropic
+    - openai
+  timeoutMs: 45000
+  maxRetries: 2
+  tierModels:
+    gemini:
+      flash: gemini-3.8-flash
+      balanced: gemini-3.8-flash
+      reasoning: gemini-3.8-flash
+    anthropic:
+      flash: claude-3-5-haiku-20241022
+      balanced: claude-sonnet-4-20250514
+      reasoning: claude-sonnet-4-20250514
+    openai:
+      flash: gpt-4.1-mini
+      balanced: gpt-4.1-mini
+      reasoning: gpt-4.1
+
+lenses:
+  enabled:
+    - security
+    - supply-chain-redteam
+    - logic-concurrency
+    - contracts-data
+    - integrations-contracts
+    - anti-slop-ui
+    - test-quality
+    - tech-radar-finops
+    - gtm-brand-conversion
+    - sales-pricing-integrity
+    - support-triage-sla
+    - competitive-intel
+    - runtime-observability
+    - creative-brand-craft
+    - pr-crisis-comms
+    - legal-privacy-compliance
+  modelTiers:
+    security: reasoning
+    supply-chain-redteam: reasoning
+    logic-concurrency: reasoning
+    contracts-data: balanced
+    integrations-contracts: balanced
+    anti-slop-ui: flash
+    visual-design-vision: reasoning
+    test-quality: flash
+    tech-radar-finops: flash
+    gtm-brand-conversion: balanced
+    sales-pricing-integrity: reasoning
+    support-triage-sla: flash
+    competitive-intel: flash
+    runtime-observability: flash
+    creative-brand-craft: flash
+    pr-crisis-comms: flash
+    legal-privacy-compliance: flash
+
+governance:
+  adrDir: docs/adr
+  ownerGates:
+    - GO PROD
+    - irreversible-data-mutation
+    - external-paid-contract-or-billing
+    - strategic-org-vision
+  decisionMatrix:
+    tier1_autonomous:
+      tier: 1
+      approvers:
+        - vp-engineering
+        - vp-finops
+      vetoRoles:
+        - cso
+      requiresAdr: false
+    tier2_council:
+      tier: 2
+      approvers:
+        - principal-architect
+        - product-director
+        - cso
+      vetoRoles:
+        - cso
+      requiresAdr: true
+    tier3_owner_gate:
+      tier: 3
+      approvers:
+        - owner
+      vetoRoles:
+        - cso
+      requiresAdr: true
+
+balanceWatchdog:
+  enabled: true
+  timeoutMs: 10000
+  webhookUrlEnvVar: BALANCE_ALERT_WEBHOOK_URL
+  providers:
+    - name: openai-llm
+      kind: openai
+      envVar: OPENAI_API_KEY
+    - name: anthropic-llm
+      kind: anthropic
+      envVar: ANTHROPIC_API_KEY
+    - name: gemini-llm
+      kind: gemini
+      envVar: GEMINI_API_KEY
+    - name: stripe-billing
+      kind: stripe
+      envVar: STRIPE_SECRET_KEY
+      warnThreshold: 100
+      criticalThreshold: 25
+      currency: USD
+
+squads:
+  - id: core-api
+    name: Core API & Domain Services
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/api/**"
+      - "src/domain/**"
+      - "tests/api/**"
+  - id: auth-billing
+    name: Auth, Multi-Tenancy & Billing
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/auth/**"
+      - "src/tenants/**"
+      - "src/billing/**"
+      - "tests/billing/**"
+  - id: frontend-ui
+    name: Frontend UI & Design System
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/app/**"
+      - "src/components/**"
+      - "src/styles/**"
+      - "tests/ui/**"
+  - id: data-layer
+    name: Database, Migrations & Analytics
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/db/**"
+      - "prisma/**"
+      - "migrations/**"
+      - "tests/db/**"
+  - id: theta
+    name: Squad Theta — Live E2E & Feature-Wiring Verification
+    leadRole: sub-manager-lead
+    ownership:
+      - "e2e/**"
+      - "playwright/**"
+      - "tests/e2e/**"
+  - id: finops
+    name: Squad FinOps — Cost Governance & Budget Telemetry
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/finops/**"
+      - "tests/finops/**"
+  - id: iota
+    name: Squad Iota — Integrations & Webhooks
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/integrations/**"
+      - "src/webhooks/**"
+      - "src/connectors/**"
+      - "src/oauth/**"
+      - "src/mcp/**"
+      - "tests/integrations/**"
+  - id: kappa
+    name: Squad Kappa — Security Red-Team & Supply-Chain
+    leadRole: sub-manager-lead
+    ownership:
+      - ".github/workflows/**"
+      - "security/**"
+      - "src/security/**"
+      - "tests/security/**"
+  - id: lambda
+    name: Squad Lambda — Automations & Tech Radar
+    leadRole: sub-manager-lead
+    ownership:
+      - "src/automations/**"
+      - "src/radar/**"
+      - "docs/tech-radar/**"
+      - "scripts/**"
+  - id: mu
+    name: Squad Mu — Marketing & Growth
+    leadRole: sub-manager-lead
+    ownership:
+      - "marketing/**"
+      - "src/marketing/**"
+      - "docs/gtm/marketing/**"
+      - "tests/marketing/**"
+  - id: nu
+    name: Squad Nu — Sales, Demos & Partnerships
+    leadRole: sub-manager-lead
+    ownership:
+      - "sales/**"
+      - "demos/**"
+      - "partners/**"
+      - "docs/gtm/sales/**"
+  - id: xi
+    name: Squad Xi — Customer Support & Success
+    leadRole: sub-manager-lead
+    ownership:
+      - "support/**"
+      - "help-center/**"
+      - "docs/help/**"
+      - "docs/gtm/support/**"
+  - id: omicron
+    name: Squad Omicron — Competitive Intelligence & Market OSINT
+    leadRole: sub-manager-lead
+    ownership:
+      - "intel/**"
+      - "docs/intel/**"
+      - "docs/battlecards/**"
+  - id: sigma
+    name: Squad Sigma — Live Bug Sentinel & Incident Triage
+    leadRole: sub-manager-lead
+    ownership:
+      - "observability/**"
+      - "incidents/**"
+      - "docs/runbooks/**"
+      - "monitoring/**"
+  - id: tau
+    name: Squad Tau — Creative & Media Studio
+    leadRole: sub-manager-lead
+    ownership:
+      - "creative/**"
+      - "media/**"
+      - "assets/ads/**"
+      - "docs/creative/**"
+  - id: upsilon
+    name: Squad Upsilon — PR, Press & Crisis Comms
+    leadRole: sub-manager-lead
+    ownership:
+      - "pr/**"
+      - "press/**"
+      - "comms/external/**"
+      - "docs/pr/**"
+  - id: phi
+    name: Squad Phi — Legal, Privacy & Regulatory Counsel
+    leadRole: sub-manager-lead
+    ownership:
+      - "legal/**"
+      - "policies/**"
+      - "compliance/**"
+      - "docs/legal/**"

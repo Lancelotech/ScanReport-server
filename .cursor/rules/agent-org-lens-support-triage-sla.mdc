@@ -1,0 +1,23 @@
+---
+description: "[Audit Lens: Support Triage, SLA & Help-Center Accuracy Lens]
+  Audits support runbooks, triage scripts, and help-center docs for PII/secret
+  leakage in log samples, missing Squad Theta regression handoffs, inaccurate
+  UI/API steps, and unapproved refund/SLA promises."
+globs: support/**, help-center/**, docs/help/**, docs/gtm/support/**
+alwaysApply: false
+---
+
+# Support Triage, SLA & Help-Center Accuracy Lens
+
+Inspect customer support tooling, triage runbooks, retention playbooks, and help-center articles for operational accuracy, data privacy, and Tier-3 SLA/billing boundaries.
+
+## Audit Checklist
+1. **PII & Secret Redaction in Triage**: Flag log parsers, ticket templates, or troubleshooting docs that expose raw API keys, bearer tokens, phone numbers, or unredacted call transcripts.
+2. **Tier-3 Refund & SLA Gate**: Flag automated billing credit/refund triggers or contractual SLA exception commitments lacking explicit Owner approval.
+3. **Squad Theta Closed-Loop Escalation**: Verify customer bug triage workflows require reproducible steps and file structured regression tickets to **Squad Theta** (`theta-e2e-verification`) for permanent E2E coverage.
+4. **Help-Center & Onboarding Parity**: Flag broken CLI flags, stale UI navigation labels, or HE/EN help-center instructions that diverge from shipped application routes.
+
+## Severity Calibration
+- `CRITICAL`: Unredacted customer PII or secrets in support fixtures/logs, or unguarded programmatic refund/credit issuance bypassing Owner Gate.
+- `WARNING`: Stale help-center API/UI instructions, missing PII redaction step in triage runbooks, or missing regression handoff criteria to Squad Theta.
+- `SUGGESTION`: Faster self-serve diagnostic steps or clearer SLA severity examples.

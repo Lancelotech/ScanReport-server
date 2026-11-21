@@ -1,0 +1,46 @@
+---
+name: governance-decision-council
+description: "Executive Decision Council: 3-Tier Governance Protocol separating
+  autonomous Tier 1 execution, 3-vote Tier 2 Architecture & Product Council ADRs
+  (with CSO veto), and strict Tier 3 Owner Gates."
+scope: org-wide
+---
+
+# Executive Decision Council — 3-Tier Governance Protocol
+
+This governance protocol defines clear decision authority across any engineering repository managed by `agent-org` so squads move at maximum velocity with zero unnecessary Owner interrupts while preserving hard security, financial, and production-safety boundaries.
+
+## Tier 1: Autonomous Execution (0 Owner Interrupts)
+- **Authority**: `vp-engineering`, `vp-finops`, and `cso` (Security).
+- **VETO Power**: `cso` holds unilateral VETO power over any change introducing security, privacy, secret-exposure, or compliance regressions.
+- **Scope**:
+  - Bug fixes, flaky-test hardening, and deterministic sensor compliance (`fence-detector`, `anti-slop-scanner`, `scan-supply-chain`).
+  - Performance and FinOps optimizations within approved ceilings (`TokenBudgetGuard` caps, prompt caching, model-tier routing).
+  - Refactors, documentation updates, and dependency patch/minor updates that preserve public contracts and pass full CI.
+- **Documentation**: Covered by atomic PR description and automated audit verdicts; no ADR required unless escalated.
+
+## Tier 2: Architecture & Product Council (3-Vote Majority + CSO VETO)
+- **Council Voting Members**: `principal-architect` + `product-director` + `cso` (3 votes).
+- **Approval Rule**: Simple majority (2 of 3 votes), **subject to unilateral `cso` VETO**. A `cso` VETO cannot be overridden at Tier 2 and must either be remediated or escalated to Tier 3 (Owner Gate).
+- **Mandatory Artifact**: Every Tier 2 decision MUST produce a concise, numbered Architecture Decision Record (`ADR-NNNN`) using:
+  ```bash
+  agent-org adr --title "<concise decision title>" --tier 2 --decision "<chosen approach & rationale>"
+  ```
+- **Scope**:
+  - Cross-squad API/DTO/schema contract changes or database schema migrations.
+  - Adding, replacing, or removing external vendors/LLM/voice/billing providers.
+  - Modifying governance matrices, `agent-org.yaml` squad ownership boundaries, or default FinOps budget caps.
+  - New recurring CI automations or cross-cutting architectural patterns.
+
+## Tier 3: Owner Gates ONLY (Explicit Human Approval Required)
+- **Authority**: Repository / Organization Owner ONLY (`GO PROD` or signed explicit approval).
+- **Scope (Never Autonomous)**:
+  1. **Production Deploys (`GO PROD`)**: Any live production release, traffic cutover, or feature-flag rollout to production customers.
+  2. **Irreversible Data or Customer Mutations**: Destructive DB migrations, bulk backfills/deletes, billing/invoice adjustments, or tenant account modifications.
+  3. **External Paid Contracts, Secrets & Billing Top-Ups**: Provisioning new paid vendor accounts, rotating/issuing production API keys, increasing spend limits, or topping up depleted vendor credits (e.g. Twilio, ElevenLabs, OpenAI, Stripe).
+  4. **Strategic Org & Vision Changes**: Pivots, pricing model changes, legal/compliance policy changes, or overriding a Tier 2 `cso` VETO.
+
+## Escalation & Tie-Breaking Rules
+- When uncertain whether a change is Tier 1 or Tier 2, the `decision-chair` defaults to **Tier 2** (fail-closed).
+- When uncertain whether a change touches a Tier 3 Owner Gate, the `decision-chair` **halts execution and escalates to Tier 3**.
+- Zero-token deterministic checks (`validate`, `scan-supply-chain`, `check-balances`) always run before any LLM council synthesis.
