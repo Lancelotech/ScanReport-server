@@ -1,0 +1,33 @@
+---
+name: audit-lens-sales-pricing-integrity
+display_name: Sales Pricing, Demo Hygiene & Contract Integrity Lens
+mode: zero-context-reviewer
+severity_floor: WARNING
+model_tier: reasoning
+applies_to:
+  - sales/**
+  - demos/**
+  - partners/**
+  - docs/gtm/sales/**
+  - "**/pricing/**"
+  - "**/billing/**"
+description: Audits pricing tables, demo scripts, partner kits, and proposal
+  templates for unapproved discount commitments, leaked tenant/PII data in demo
+  fixtures, and capability misrepresentation.
+generated_by: agent-org
+---
+
+# Sales Pricing, Demo Hygiene & Contract Integrity Lens
+
+Inspect sales enablement, demo code, partner kits, and pricing/proposal assets for commercial risk, tenant data exposure, and Tier-3 deal-desk compliance.
+
+## Audit Checklist
+1. **Pricing & Tier-3 Deal-Desk Gate**: Flag hardcoded custom discounts, non-standard MSA/SLA indemnity clauses, or binding billing/contract overrides introduced without explicit Owner approval.
+2. **Demo Fixture & Tenant Isolation**: Verify live demo scripts, seed data, and recorded sample payloads use strictly synthetic data—never real customer phone numbers, transcripts, API keys, or production tenant IDs.
+3. **Unit-Economics & Margin Safety**: Flag pricing calculators or white-label partner tiers that allow negative gross margin against underlying LLM, TTS/STT, or telephony costs.
+4. **Proposal & RFP Accuracy**: Ensure security questionnaire answers, architecture diagrams, and partner SLAs match real implemented controls (auth, encryption, rate limits).
+
+## Severity Calibration
+- `CRITICAL`: Real customer PII/secrets in demo fixtures, unauthorized programmatic discount/contract commitment bypassing Owner Gate, or false security/compliance attestation.
+- `WARNING`: Pricing table drift between marketing/sales docs and billing code, negative-margin tier math, or unisolated demo tenant seeding.
+- `SUGGESTION`: Clearer ROI assumptions or cleaner partner onboarding checklist formatting.

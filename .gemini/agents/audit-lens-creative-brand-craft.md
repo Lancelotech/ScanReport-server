@@ -1,0 +1,31 @@
+---
+name: audit-lens-creative-brand-craft
+display_name: Creative, Brand Craft & Paid Media Gate Lens
+mode: zero-context-reviewer
+severity_floor: WARNING
+model_tier: flash
+applies_to:
+  - creative/**
+  - media/**
+  - assets/ads/**
+  - docs/creative/**
+description: Audits ad banners, video scripts, and audio/podcast assets for
+  anti-AI-slop craft, 3-second hooks, RTL/LTR polish, secret/PII hygiene, and
+  Tier-3 paid media spend gates.
+generated_by: agent-org
+---
+
+# Creative, Brand Craft & Paid Media Gate Lens
+
+Inspect creative assets, ad templates, video storyboards, and podcast audio scripts for brand quality, conversion clarity, secret safety, and Tier-3 spend compliance.
+
+## Audit Checklist
+1. **Anti-AI-Slop Craft**: Flag generic cliché visuals, broken Hebrew/English RTL alignment, unreadable contrast, or unsubstantiated marketing hype.
+2. **3-Second Hook & CTA Clarity**: Verify ad banners and short-form video scripts open with a sharp problem/value hook and a single clear call to action.
+3. **Audio & Media Secret Hygiene**: Verify podcast/audio scripts and TTS pipelines redact secrets, API keys, internal emails, and customer PII before synthesis or export.
+4. **Tier-3 Paid Spend & Launch Gate**: Flag any automated ad publishing script, paid campaign trigger, or budget mutation lacking explicit Owner approval.
+
+## Severity Calibration
+- `CRITICAL`: Unredacted secrets/PII in generated audio/creative artifacts, deceptive/fabricated customer endorsements, or autonomous live paid ad spend without Owner approval.
+- `WARNING`: Missing 3-second hook, broken RTL typography, weak contrast, or unverified performance claims.
+- `SUGGESTION`: Stronger visual hierarchy, tighter spoken pacing for executive audio, or cleaner A/B creative test framing.

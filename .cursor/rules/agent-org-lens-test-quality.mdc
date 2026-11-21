@@ -1,0 +1,23 @@
+---
+description: "[Audit Lens: Test Quality & Anti-Weakening Fence Lens] Audits
+  shallow AI self-grading tests, weakened fence assertions, skipped/focused
+  tests, real network calls in tests, and missing unhappy-path coverage."
+globs: "**/*.test.*, **/*.spec.*, **/__tests__/**, **/tests/**, **/test/**, src/**"
+alwaysApply: false
+---
+
+# Test Quality & Anti-Weakening Fence Audit Lens
+
+Ensure tests prove real system behavior and never silently weaken existing regression fences.
+
+## Audit Checklist
+1. **Fence Weakening & Suppressions**: Flag newly added `.skip(`, `.only(`, `xit`, `xdescribe`, `test.fixme`, `eslint-disable` without concrete justification, `@ts-ignore`/`@ts-expect-error` hiding real type errors, or deleted/loosened assertions in existing regression tests.
+2. **Shallow / Tautological Self-Grading Tests**: Flag tests that only mock the unit under test, assert `expect(true).toBe(true)`, check only `toBeDefined()` on rich structured outputs, or mirror implementation constants without exercising real behavior.
+3. **Unhappy-Path & Boundary Coverage**: New logic MUST have tests covering invalid/malformed inputs, network failures/timeouts/429/5xx, empty inputs, boundary values, and cross-platform edge cases—not just a single happy path.
+4. **Determinism & Network Isolation**: Flag real third-party network calls, wall-clock `setTimeout` sleeps causing flakiness, unmocked `Math.random()`/`Date.now()` dependencies, or shared mutable test state leaking across cases.
+5. **Production Change Without Tests**: Flag non-trivial behavioral changes in `src/` that ship with zero added or updated test coverage.
+
+## Severity Calibration
+- `CRITICAL`: Deleted/weakened security or regression fence test, `.only(` left in test suite (silently skipping other tests in CI), or real live third-party API/payment calls executed during unit tests.
+- `WARNING`: Missing unhappy-path tests for new logic, shallow/tautological assertions, `.skip(` without linked tracking issue, or flaky timing-dependent tests.
+- `SUGGESTION`: Additional boundary case or cleaner test fixture structure.
